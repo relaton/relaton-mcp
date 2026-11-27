@@ -9,19 +9,37 @@ repo's issue tracker.
 
 Exposes the Relaton Index (api.relaton.org v3) to AI agents over MCP:
 
-- Tools: `search`, `resolve`, `get_record`, `get_relations`,
-  `get_citation_chain`, `format_citation`
-- Resources: `relaton://records/{key}`
-- Transport: Streamable HTTP + OAuth (Workers agents SDK)
+- Tools:
+  - `search` — corpus search (q, flavor, year, doctype, status, limit, cursor)
+  - `resolve` — any identifier string → parsed components + ranked canonical candidates
+  - `get_record` — full bibliographic record by corpus key (json / xml / yaml)
+  - `get_relations` — typed relation graph around a document (depth, types)
+  - `get_citation_chain` — edition chain along the structural relation types
+  - `get_timeline` — classified, date-ordered publication-history events
+  - `format_citation` — any record/key → ISO 690, Chicago, APA, MLA, BibTeX, RIS, CSL-JSON
+- Transport: stateless Streamable HTTP at `/mcp` (`createMcpHandler`,
+  agents SDK + MCP SDK v2 — no session, no Durable Object)
+- OAuth: deferred (read-only MVP); the handler supports an
+  `OAuthProvider` wrapper when the owner registers the OAuth app
 
 The killer pair for agents: pubid identifier resolution (any id string →
 canonical candidates) and citation formatting (any record → correct citation
 in seven styles).
 
+Client configuration:
+
+```json
+{
+  "mcpServers": {
+    "relaton": { "url": "https://mcp.relaton.org/mcp" }
+  }
+}
+```
+
 ## Cloudflare deployment
 
 - Worker: `mcp-relaton-org` (`wrangler.jsonc`)
-- Route: `mcp.relaton.org` (custom domain, enable in config once zone confirmed)
+- Route: `mcp.relaton.org` (custom domain, live)
 - GitHub secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
 - Wrangler secrets (owner-side): OAuth app credentials
 - Registry listing in the MCP registry after first deploy
