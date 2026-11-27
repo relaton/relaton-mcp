@@ -6,7 +6,6 @@
   "workers_dev": true,
   "observability": {
     "enabled": true
-  }
-  // Custom domain: enable once the zone is confirmed on the account.
-  // "routes": [{ "pattern": "mcp.relaton.org", "custom_domain": true }]
+  },
+  "routes": [{ "pattern": "mcp.relaton.org", "custom_domain": true }]
 }
