@@ -128,5 +128,18 @@ describe("relaton MCP server", () => {
     const text = (result.content as { type: string; text: string }[])[0]!.text;
     expect(result.isError).toBe(true);
     expect(text).toContain("404");
+    expect(text).not.toContain("retry");
+  });
+
+  it("import-window 500s tell the agent to retry instead of looking like an outage", async () => {
+    stubApi("Internal server error: D1_ERROR: Currently processing a long-running import.", 500);
+    const handler = createMcpHandler(() => createServer("https://api.relaton.org"));
+    const { result } = await rpc(handler, 8, "tools/call", {
+      name: "get_record",
+      arguments: { key: "ISO 9001:2015" },
+    });
+    const text = (result.content as { type: string; text: string }[])[0]!.text;
+    expect(result.isError).toBe(true);
+    expect(text).toContain("retry in ~1 minute");
   });
 });
