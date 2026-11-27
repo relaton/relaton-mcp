@@ -25,13 +25,20 @@ export function createServer(base: string = DEFAULT_API_BASE): McpServer {
     try {
       return { content: [{ type: "text", text: await fn() }] };
     } catch (e) {
-      const detail =
-        e instanceof ApiError
-          ? `status ${e.status}: ${e.body}`
-          : e instanceof Error
-            ? e.message
-            : String(e);
-      return { isError: true, content: [{ type: "text", text: `API request failed (${detail})` }] };
+      let detail: string;
+      let hint = "";
+      if (e instanceof ApiError) {
+        detail = `status ${e.status}: ${e.body}`;
+        // relaton-api-js#190: D1 import windows 500 every read route; tell the
+        // agent this is temporary instead of surfacing a bare server error.
+        if (e.retryable) hint = " — the API is temporarily serving errors; retry in ~1 minute";
+      } else {
+        detail = e instanceof Error ? e.message : String(e);
+      }
+      return {
+        isError: true,
+        content: [{ type: "text", text: `API request failed (${detail})${hint}` }],
+      };
     }
   };
 

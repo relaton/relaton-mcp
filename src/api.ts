@@ -6,6 +6,10 @@ export const DEFAULT_API_BASE = "https://api.relaton.org";
 export class ApiError extends Error {
   status: number;
   body: string;
+  /** D1 import windows 500 every read; the API is up, the answer is "back off". */
+  get retryable(): boolean {
+    return this.status >= 500;
+  }
   constructor(status: number, body: string) {
     super(`api.relaton.org returned ${status}`);
     this.status = status;
