@@ -40,6 +40,12 @@ Client configuration:
 
 - Worker: `mcp-relaton-org` (`wrangler.jsonc`)
 - Route: `mcp.relaton.org` (custom domain, live)
+- `API_BASE` points at the API's workers.dev hostname, not the zone:
+  Cloudflare edge bot mitigation 403s worker→worker subrequests that
+  traverse the relaton.org zone, while external clients on api.relaton.org
+  are unaffected. A service binding (`services` → `api-relaton-org`) is
+  the owner-side hardening option if the workers.dev lane ever needs to
+  disappear.
 - GitHub secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
 - Wrangler secrets (owner-side): OAuth app credentials
 - Registry listing in the MCP registry after first deploy

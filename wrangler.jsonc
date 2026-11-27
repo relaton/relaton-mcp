@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-07-01",
   "compatibility_flags": ["nodejs_compat"],
-  "vars": { "API_BASE": "https://api.relaton.org" },
+  "vars": { "API_BASE": "https://api-relaton-org.relaton.workers.dev" },
   "workers_dev": true,
   "observability": {
     "enabled": true
